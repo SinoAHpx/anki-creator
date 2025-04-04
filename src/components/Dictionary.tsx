@@ -1,4 +1,3 @@
-import React from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
@@ -38,11 +37,6 @@ export function Dictionary({
 }: DictionaryProps) {
   return (
     <div className="h-screen flex flex-col bg-background text-foreground">
-      <header className="border-b p-3 relative">
-        <h1 className="text-xl font-semibold text-center">The dictionary</h1>
-        <ThemeToggle />
-      </header>
-
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div className="w-80 border-r flex flex-col p-4 space-y-4 bg-muted/20">
@@ -65,6 +59,7 @@ export function Dictionary({
             Settings
           </Button>
         </div>
+        <ThemeToggle />
 
         {/* Main content */}
         <div className="flex-1 p-6 overflow-auto">
