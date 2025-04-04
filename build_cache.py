@@ -2,6 +2,9 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI, APIError, RateLimitError
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
+
 load_dotenv()
 key = os.getenv('LLM_KEY')
 model = os.getenv('LLM_MODEL')
@@ -11,6 +14,9 @@ client = OpenAI(
     api_key=key,
     base_url=url
 )
+
+# Thread-safe file writing
+write_lock = threading.Lock()
 
 prompt = """**Role Definition:**
 You are a comprehensive English dictionar. Your sole purpose is to provide detailed definitions for any English word requested.
@@ -134,31 +140,55 @@ You are a comprehensive English dictionar. Your sole purpose is to provide detai
 - NEVER wrap the content with markdown code block
 """
 
-cache = open('dictionary_cache.json', 'a')
-with open('common_words.txt', 'r') as f:
-    line = f.readline()
-    while line:
-        max_retries = 3
-        retry_delay = 1
-        for attempt in range(max_retries):
-            try:
-                completion = client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": prompt},
-                        {
-                            "role": "user",
-                            "content": "How do I check if a Python object is an instance of a class?",
-                        },
-                    ],
-                )
-                resp = completion.choices[0].message.content
-                cache.write(resp + ',\n')
-                break
-            except (APIError, RateLimitError) as e:
-                if attempt == max_retries - 1:
-                    print(f"Failed after {max_retries} attempts: {str(e)}")
-                    raise
-                print(f"Attempt {attempt + 1} failed, retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff
+def process_word(word):
+    word = word.strip()
+    if not word:
+        return None
+        
+    print(f'Processing word: {word}')
+    max_retries = 3
+    retry_delay = 1
+
+    for attempt in range(max_retries):
+        try:
+            completion = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": word},
+                ],
+            )
+            resp = completion.choices[0].message.content.strip('```').strip('json')
+            
+            with write_lock:
+                with open('dictionary_cache.json', 'a') as cache:
+                    cache.write(resp + ',\n')
+            return word
+        except (APIError, RateLimitError) as e:
+            if attempt == max_retries - 1:
+                print(f"Failed after {max_retries} attempts for word {word}: {str(e)}")
+                return None
+            print(f"Attempt {attempt + 1} failed for word {word}, retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+            retry_delay *= 2  # Exponential backoff
+
+def main():
+    # Read all words first
+    with open('common_words.txt', 'r') as f:
+        words = [line.strip() for line in f if line.strip()]
+    
+    # Process in parallel batches
+    batch_size = 10  # Adjust based on API rate limits and system resources
+    with ThreadPoolExecutor(max_workers=5) as executor:  # Adjust max_workers as needed
+        futures = []
+        for i in range(0, len(words), batch_size):
+            batch = words[i:i + batch_size]
+            futures.extend(executor.submit(process_word, word) for word in batch)
+            
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                print(f'Completed: {result}')
+
+if __name__ == '__main__':
+    main()
