@@ -133,3 +133,80 @@ export async function queryDictionaryCache(
     return { data: null, error: errorMessage };
   }
 }
+
+/**
+ * Queries the external dictionary API for a given word.
+ * @param searchQuery The word to search for.
+ * @returns A promise that resolves to an object containing either the dictionary data or an error message.
+ */
+export async function queryDictionaryAPI(
+  searchQuery: string
+): Promise<QueryResult> {
+  const lowerCaseQuery = searchQuery.toLowerCase();
+
+  // Instead of using the direct URL, use the /api proxy path
+  // that's configured in vite.config.ts
+  const url = `/query?word=${encodeURIComponent(lowerCaseQuery)}`;
+
+  try {
+    console.log(`Querying dictionary API through proxy: ${url}`);
+    const response = await fetch(url);
+
+    console.log(response);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch from dictionary API: ${response.status} ${response.statusText}`
+      );
+    }
+
+    // Assuming API returns data similar to RawDictionaryEntry structure
+    const entry: RawDictionaryEntry = await response.json();
+
+    // Map raw entry to the enhanced DictionaryData structure
+    const meanings: Meaning[] = (entry.parts_of_speech || [])
+      .map((pos): Meaning | null => {
+        const posMeanings = entry.meanings?.[pos];
+        if (!posMeanings) return null;
+
+        return {
+          partOfSpeech: pos,
+          definitions: posMeanings.map((def) => ({
+            definition: def.definition,
+            example: def.example,
+            usage_notes: def.usage_notes,
+            synonyms: def.synonyms,
+            countable: def.countable ?? null,
+          })),
+        };
+      })
+      .filter((m): m is Meaning => m !== null);
+
+    const mappedData: DictionaryData = {
+      word: entry.word, // Use the word from the response, might differ in casing etc.
+      pronunciation: entry.pronunciation || null,
+      grammaticalForms: entry.grammatical_forms || null,
+      meanings: meanings,
+      etymology: entry.etymology || null,
+      usageNotes: entry.usage_notes || null,
+    };
+
+    console.log(`Successfully fetched data for "${searchQuery}" from API.`);
+    return { data: mappedData, error: null };
+  } catch (err) {
+    console.error("Error during dictionary API query:", err);
+
+    // Specifically check for and handle CORS errors
+    const errorMessage =
+      err instanceof Error
+        ? // Detect potential CORS errors
+          err.message.includes("Failed to fetch") ||
+          err.message.includes("Network Error") ||
+          err.message.includes("CORS")
+          ? "CORS error: Unable to access the dictionary API directly. Make sure the VITE_DICTIONARY_URL environment variable is set correctly and the server allows CORS or the proxy is configured properly."
+          : err.message
+        : "An unexpected error occurred during API query.";
+
+    return { data: null, error: errorMessage };
+  }
+}
