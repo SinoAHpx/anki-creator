@@ -1,6 +1,5 @@
 import { Dictionary } from "./components/Dictionary";
 import { Sidebar } from "./components/Sidebar";
-import { ThemeToggle } from "./components/ThemeToggle";
 
 function App() {
   return (
@@ -8,7 +7,6 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <div className="relative flex-1">
-          <ThemeToggle />
           <Dictionary />
         </div>
       </div>
