@@ -9,7 +9,6 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside className="w-80 border-r flex flex-col p-4 space-y-4 bg-muted/20">
-      <h2 className="text-lg font-semibold">Dictionary Search</h2>
       <Input
         placeholder="Enter a word..."
         value={searchQuery}
