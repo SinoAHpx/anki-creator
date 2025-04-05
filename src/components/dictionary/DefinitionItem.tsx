@@ -22,7 +22,7 @@ export function DefinitionItem({ definition, index }: DefinitionItemProps) {
       )}
       {definition.usage_notes && (
         <p className="text-xs text-blue-600 dark:text-blue-400 ml-5">
-          Note: {definition.usage_notes}
+          {definition.usage_notes}
         </p>
       )}
       {definition.synonyms && definition.synonyms.length > 0 && (
