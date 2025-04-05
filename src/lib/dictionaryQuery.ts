@@ -75,10 +75,14 @@ export async function queryDictionaryCache(
         console.warn("dictionary_cache.json not found. Proceeding to LLM.");
         return {
           data: null,
-          error: `Word "${searchQuery}" not in cache (cache file not found). LLM query needed.`,
+          error: null, // Don't show error to user, just let it proceed to online lookup
         };
       } else {
-        throw new Error(`Failed to fetch cache: ${response.statusText}`);
+        console.error(`Cache fetch error: ${response.statusText}`);
+        return {
+          data: null,
+          error: null, // Don't show technical error to user
+        };
       }
     }
 
@@ -121,16 +125,13 @@ export async function queryDictionaryCache(
       console.log(`"${searchQuery}" not found in cache. Querying LLM...`);
       return {
         data: null,
-        error: `Word "${searchQuery}" not found in cache. LLM query needed.`,
+        error: null, // No need to show error message about cache miss
       };
     }
   } catch (err) {
     console.error("Error during dictionary cache query:", err);
-    const errorMessage =
-      err instanceof Error
-        ? err.message
-        : "An unexpected error occurred during cache query.";
-    return { data: null, error: errorMessage };
+    // Log error but don't show technical details to user
+    return { data: null, error: null };
   }
 }
 
@@ -152,12 +153,25 @@ export async function queryDictionaryAPI(
     console.log(`Querying dictionary API through proxy: ${url}`);
     const response = await fetch(url);
 
-    console.log(response);
-
     if (!response.ok) {
-      throw new Error(
-        `Failed to fetch from dictionary API: ${response.status} ${response.statusText}`
-      );
+      if (response.status === 404) {
+        return {
+          data: null,
+          error: `"${searchQuery}" was not found in our dictionary.`,
+        };
+      } else if (response.status >= 500) {
+        return {
+          data: null,
+          error:
+            "Dictionary service is currently unavailable. Please try again later.",
+        };
+      } else {
+        console.error(`API error: ${response.status} ${response.statusText}`);
+        return {
+          data: null,
+          error: "Unable to retrieve word information at this time.",
+        };
+      }
     }
 
     // Assuming API returns data similar to RawDictionaryEntry structure
@@ -196,17 +210,11 @@ export async function queryDictionaryAPI(
   } catch (err) {
     console.error("Error during dictionary API query:", err);
 
-    // Specifically check for and handle CORS errors
-    const errorMessage =
-      err instanceof Error
-        ? // Detect potential CORS errors
-          err.message.includes("Failed to fetch") ||
-          err.message.includes("Network Error") ||
-          err.message.includes("CORS")
-          ? "CORS error: Unable to access the dictionary API directly. Make sure the VITE_DICTIONARY_URL environment variable is set correctly and the server allows CORS or the proxy is configured properly."
-          : err.message
-        : "An unexpected error occurred during API query.";
-
-    return { data: null, error: errorMessage };
+    // Log the technical error for debugging but show user-friendly message
+    return {
+      data: null,
+      error:
+        "Unable to connect to the dictionary service. Please check your connection and try again.",
+    };
   }
 }

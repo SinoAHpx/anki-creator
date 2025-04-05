@@ -4,6 +4,7 @@ import { MeaningCard } from "./dictionary/MeaningCard";
 import { EtymologyCard } from "./dictionary/EtymologyCard";
 import { UsageNotesCard } from "./dictionary/UsageNotesCard";
 import { useDictionaryStore } from "../store/dictionaryStore";
+import { ErrorMessage } from "./ui/error-message";
 
 export function Dictionary() {
   const { wordData, isLoading, error } = useDictionaryStore();
@@ -11,9 +12,18 @@ export function Dictionary() {
   return (
     <div className="flex-1 p-6 overflow-auto">
       {isLoading ? (
-        <p>Loading...</p>
+        <div className="flex items-center justify-center h-full">
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <p className="text-muted-foreground">Searching dictionary...</p>
+          </div>
+        </div>
       ) : error ? (
-        <p className="text-destructive">{error}</p>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="p-6 max-w-md">
+            <ErrorMessage title="Dictionary Lookup Failed" message={error} />
+          </div>
+        </div>
       ) : wordData ? (
         <ScrollArea className="h-[calc(100vh-88px)] pr-4">
           <div className="space-y-6">
