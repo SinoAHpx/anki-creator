@@ -11,12 +11,12 @@ export function UsageNotesCard({ usageNotes }: UsageNotesCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Usage Notes</CardTitle>
+        <CardTitle className="text-lg">General Usage Notes</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
         {usageNotes.general && (
           <p>
-            <strong>General:</strong> {usageNotes.general}
+            {usageNotes.general}
           </p>
         )}
         {usageNotes.specialCases && (
