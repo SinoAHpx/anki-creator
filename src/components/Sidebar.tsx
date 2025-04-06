@@ -6,7 +6,7 @@ import { Library, Settings } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 // Define the Page type, matching the one in App.tsx
-type Page = "dictionary" | "settings";
+export type Page = "dictionary" | "settings" | "library";
 
 // Define props for Sidebar
 interface SidebarProps {
@@ -45,10 +45,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setActivePage("dictionary")}
+          onClick={() => setActivePage("library")}
         >
           <Library className="h-5 w-5" />
-          <span className="sr-only">Dictionary</span>
+          <span className="sr-only">Library</span>
         </Button>
       </div>
     </aside>
