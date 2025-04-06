@@ -1,11 +1,19 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDictionaryStore } from "@/store/dictionaryStore";
-import { Settings, Library } from "lucide-react";
+import { Library, Settings } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
-export const Sidebar: React.FC = () => {
+// Define the Page type, matching the one in App.tsx
+type Page = "dictionary" | "settings";
+
+// Define props for Sidebar
+interface SidebarProps {
+  setActivePage: Dispatch<SetStateAction<Page>>;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
   const { searchQuery, setSearchQuery, handleSearch, isLoading } =
     useDictionaryStore();
 
@@ -24,13 +32,23 @@ export const Sidebar: React.FC = () => {
 
       <div className="mt-auto flex flex-row items-center justify-center space-x-2">
         <ThemeToggle />
-        <Button variant="ghost" size="icon">
+        {/* Settings Button - Navigates to Settings page */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setActivePage("settings")}
+        >
           <Settings className="h-5 w-5" />
           <span className="sr-only">Settings</span>
         </Button>
-        <Button variant="ghost" size="icon">
+        {/* Dictionary (Library) Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setActivePage("dictionary")}
+        >
           <Library className="h-5 w-5" />
-          <span className="sr-only">Library</span>
+          <span className="sr-only">Dictionary</span>
         </Button>
       </div>
     </aside>
