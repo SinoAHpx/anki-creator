@@ -54,7 +54,7 @@ root
     - assets
         - react.svg
     - components
-        - Dictionary.tsx
+        - Dictionary.tsx  # Dictionary component with optimized layout (reduced margins and padding)
         - Library.tsx
         - Settings.tsx
         - Sidebar.tsx  # Resizable sidebar component that uses ResizablePanel

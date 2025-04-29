@@ -10,7 +10,7 @@ export function Dictionary() {
   const { wordData, isLoading, error } = useDictionaryStore();
 
   return (
-    <div className="flex-1 p-4 overflow-auto relative">
+    <div className="flex-1 p-4 overflow-auto relative h-full ">
       {isLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="flex flex-col items-center gap-2">
@@ -26,11 +26,11 @@ export function Dictionary() {
         </div>
       ) : wordData ? (
         <>
-          <ScrollArea className="h-[calc(100vh-88px)] pr-4">
-            <div className="space-y-6">
+          <ScrollArea className="pr-2">
+            <div className="space-y-4 pb-2">
               <DictionaryHeader wordData={wordData} />
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {wordData.meanings.map((meaning, index) => (
                   <MeaningCard
                     key={`${meaning.partOfSpeech}-${index}`}

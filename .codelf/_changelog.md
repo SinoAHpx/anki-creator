@@ -67,4 +67,25 @@
      - App.tsx // update - Updated layout to use ResizablePanelGroup and ResizableHandle
    ```
 
+## 2024-07-13
+
+### 1. Optimize Dictionary Layout
+
+**Change Type**: improvement
+
+> **Purpose**: Optimize the dictionary page layout by reducing excessive margins
+> **Detailed Description**: Reduced padding and spacing in the Dictionary component to minimize excessive margin on the bottom and right sides
+> **Reason for Change**: To improve the space utilization and visual appearance of the dictionary layout
+> **Impact Scope**: Dictionary component
+> **API Changes**: None
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, purely visual improvement
+
+   ```
+   root
+   - src
+     - components
+       - Dictionary.tsx // update - Reduced padding and spacing for better layout
+   ```
+
 ...
