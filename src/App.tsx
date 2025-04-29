@@ -17,10 +17,10 @@ function App() {
             return (
               <ResizablePanelGroup
                 direction="horizontal"
-                className="flex flex-1 overflow-hidden"
+                className="flex flex-1 h-full overflow-hidden"
               >
                 <Sidebar setActivePage={setCurrentPage} />
-                <ResizableHandle withHandle />
+                <ResizableHandle />
                 <ResizablePanel defaultSize={80} className="relative">
                   <Dictionary />
                 </ResizablePanel>

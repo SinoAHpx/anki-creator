@@ -9,7 +9,6 @@ interface DictionaryState {
     error: string | null;
     setSearchQuery: (query: string) => void;
     handleSearch: () => Promise<void>;
-    clearResults: () => void;
     // You can add other state and actions here as needed
 }
 
@@ -42,6 +41,4 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
             });
         }
     },
-
-    clearResults: () => set({ wordData: null, error: null }),
 }));

@@ -5,14 +5,12 @@ import { EtymologyCard } from "./dictionary/EtymologyCard";
 import { UsageNotesCard } from "./dictionary/UsageNotesCard";
 import { useDictionaryStore } from "../store/dictionaryStore";
 import { ErrorMessage } from "./ui/error-message";
-import { Button } from "./ui/button";
-import { X } from "lucide-react";
 
 export function Dictionary() {
-  const { wordData, isLoading, error, clearResults } = useDictionaryStore();
+  const { wordData, isLoading, error } = useDictionaryStore();
 
   return (
-    <div className="flex-1 p-6 overflow-auto relative">
+    <div className="flex-1 p-4 overflow-auto relative">
       {isLoading ? (
         <div className="flex items-center justify-center h-full">
           <div className="flex flex-col items-center gap-2">
@@ -24,22 +22,10 @@ export function Dictionary() {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="p-6 max-w-md">
             <ErrorMessage title="Dictionary Lookup Failed" message={error} />
-            <div className="mt-4 flex justify-center">
-              <Button variant="secondary" size="sm" onClick={clearResults}>
-                <X className="h-4 w-4 mr-2" />
-                Clear
-              </Button>
-            </div>
           </div>
         </div>
       ) : wordData ? (
         <>
-          <div className="absolute right-6 top-6 z-10">
-            <Button variant="outline" size="sm" onClick={clearResults}>
-              <X className="h-4 w-4 mr-2" />
-              Clear
-            </Button>
-          </div>
           <ScrollArea className="h-[calc(100vh-88px)] pr-4">
             <div className="space-y-6">
               <DictionaryHeader wordData={wordData} />
