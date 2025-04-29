@@ -56,6 +56,42 @@ interface QueryResult {
 }
 
 /**
+ * Maps a raw dictionary entry to our standardized DictionaryData format
+ */
+function mapEntryToData(entry: RawDictionaryEntry): DictionaryData {
+    const meanings: Meaning[] = (entry.parts_of_speech || [])
+        .map((pos): Meaning | null => {
+            const posMeanings = entry.meanings?.[pos];
+            if (!posMeanings) return null;
+
+            return {
+                partOfSpeech: pos,
+                definitions: posMeanings.map((def) => ({
+                    definition: def.definition,
+                    example: def.example,
+                    usage_notes: def.usage_notes,
+                    synonyms: def.synonyms,
+                    countable: def.countable ?? null,
+                })),
+            };
+        })
+        .filter((m): m is Meaning => m !== null);
+
+    return {
+        word: entry.word,
+        pronunciation: entry.pronunciation || null,
+        grammaticalForms: entry.grammatical_forms || null,
+        meanings: meanings,
+        etymology: entry.etymology || null,
+        usageNotes: entry.usage_notes ? {
+            general: entry.usage_notes.general,
+            regionalVariations: entry.usage_notes.regional_variations,
+            specialCases: entry.usage_notes.special_cases,
+        } : null,
+    };
+}
+
+/**
  * Queries the local dictionary cache for a given word.
  * @param searchQuery The word to search for.
  * @returns A promise that resolves to an object containing either the dictionary data or an error message.
@@ -67,72 +103,43 @@ export async function queryDictionaryCache(
 
     try {
         // 1. Check cache
-        const response = await fetch("/dictionary_cache.json"); // Fetch from public root
+        const response = await fetch("/dictionary_cache.json");
 
         if (!response.ok) {
-            // Handle case where cache file doesn't exist or fetch fails
             if (response.status === 404) {
                 console.warn(
                     "dictionary_cache.json not found. Proceeding to LLM."
                 );
                 return {
                     data: null,
-                    error: null, // Don't show error to user, just let it proceed to online lookup
+                    error: null,
                 };
             } else {
                 console.error(`Cache fetch error: ${response.statusText}`);
                 return {
                     data: null,
-                    error: null, // Don't show technical error to user
+                    error: null,
                 };
             }
         }
 
-        // Cache is an array of word entries
-        const cache: RawDictionaryEntry[] = await response.json();
-        // Find the entry for the searched word
-        const entry = cache.find((item) => item.word === lowerCaseQuery);
+        const cache = await response.json();
+        const entry = Array.isArray(cache)
+            ? cache.find((item) => item.word.toLowerCase() === lowerCaseQuery)
+            : cache[lowerCaseQuery];
 
         if (entry) {
-            // Map raw entry to the enhanced DictionaryData structure
-            const meanings: Meaning[] = (entry.parts_of_speech || [])
-                .map((pos): Meaning | null => {
-                    const posMeanings = entry.meanings?.[pos];
-                    if (!posMeanings) return null;
-
-                    return {
-                        partOfSpeech: pos,
-                        definitions: posMeanings.map((def) => ({
-                            definition: def.definition,
-                            example: def.example,
-                            usage_notes: def.usage_notes,
-                            synonyms: def.synonyms,
-                            countable: def.countable ?? null, // Map countable, default to null
-                        })),
-                    };
-                })
-                .filter((m): m is Meaning => m !== null); // Filter out nulls and assert type
-
-            const mappedData: DictionaryData = {
-                word: entry.word,
-                pronunciation: entry.pronunciation || null,
-                grammaticalForms: entry.grammatical_forms || null,
-                meanings: meanings,
-                etymology: entry.etymology || null,
-                usageNotes: entry.usage_notes || null,
-            };
+            const mappedData = mapEntryToData(entry);
             return { data: mappedData, error: null };
         } else {
-            // 2. Word not in cache -> Need LLM
-            console.log(`"${searchQuery}" not found in cache. Querying LLM...`);
+            console.log(`"${searchQuery}" not found in cache.`);
             return {
                 data: null,
-                error: null, // No need to show error message about cache miss
+                error: null,
             };
         }
     } catch (err) {
         console.error("Error during dictionary cache query:", err);
-        // Log error but don't show technical details to user
         return { data: null, error: null };
     }
 }
@@ -145,10 +152,17 @@ export async function queryDictionaryCache(
 export async function queryDictionaryAPI(
     searchQuery: string
 ): Promise<QueryResult> {
-    const lowerCaseQuery = searchQuery.toLowerCase();
+    // First try to get the word from the cache
+    const cacheResult = await queryDictionaryCache(searchQuery);
 
-    // Instead of using the direct URL, use the /api proxy path
-    // that's configured in vite.config.ts
+    // If the word was found in the cache, return it immediately
+    if (cacheResult.data) {
+        console.log(`Found "${searchQuery}" in the local dictionary cache.`);
+        return cacheResult;
+    }
+
+    // If not found in cache, proceed with external API query
+    const lowerCaseQuery = searchQuery.toLowerCase();
     const url = `/query?word=${encodeURIComponent(lowerCaseQuery)}`;
 
     try {
@@ -177,43 +191,13 @@ export async function queryDictionaryAPI(
             }
         }
 
-        // Assuming API returns data similar to RawDictionaryEntry structure
         const entry: RawDictionaryEntry = await response.json();
-
-        // Map raw entry to the enhanced DictionaryData structure
-        const meanings: Meaning[] = (entry.parts_of_speech || [])
-            .map((pos): Meaning | null => {
-                const posMeanings = entry.meanings?.[pos];
-                if (!posMeanings) return null;
-
-                return {
-                    partOfSpeech: pos,
-                    definitions: posMeanings.map((def) => ({
-                        definition: def.definition,
-                        example: def.example,
-                        usage_notes: def.usage_notes,
-                        synonyms: def.synonyms,
-                        countable: def.countable ?? null,
-                    })),
-                };
-            })
-            .filter((m): m is Meaning => m !== null);
-
-        const mappedData: DictionaryData = {
-            word: entry.word, // Use the word from the response, might differ in casing etc.
-            pronunciation: entry.pronunciation || null,
-            grammaticalForms: entry.grammatical_forms || null,
-            meanings: meanings,
-            etymology: entry.etymology || null,
-            usageNotes: entry.usage_notes || null,
-        };
+        const mappedData = mapEntryToData(entry);
 
         console.log(`Successfully fetched data for "${searchQuery}" from API.`);
         return { data: mappedData, error: null };
     } catch (err) {
         console.error("Error during dictionary API query:", err);
-
-        // Log the technical error for debugging but show user-friendly message
         return {
             data: null,
             error: "Unable to connect to the dictionary service. Please check your connection and try again.",

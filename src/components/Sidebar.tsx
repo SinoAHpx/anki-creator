@@ -5,10 +5,8 @@ import { useDictionaryStore } from "@/store/dictionaryStore";
 import { Library, Settings } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
-// Define the Page type, matching the one in App.tsx
 export type Page = "dictionary" | "settings" | "library";
 
-// Define props for Sidebar
 interface SidebarProps {
   setActivePage: Dispatch<SetStateAction<Page>>;
 }
@@ -25,14 +23,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />
-      <Button onClick={handleSearch} disabled={isLoading || !searchQuery}>
+      <Button
+        onClick={handleSearch}
+        disabled={isLoading || !searchQuery}
+      >
         {isLoading ? "Searching..." : "Query"}
       </Button>
       {/* Additional sidebar content can go here */}
 
       <div className="mt-auto flex flex-row items-center justify-center space-x-2">
         <ThemeToggle />
-        {/* Settings Button - Navigates to Settings page */}
         <Button
           variant="ghost"
           size="icon"
@@ -41,7 +41,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
           <Settings className="h-5 w-5" />
           <span className="sr-only">Settings</span>
         </Button>
-        {/* Dictionary (Library) Button */}
         <Button
           variant="ghost"
           size="icon"

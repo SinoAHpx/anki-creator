@@ -3,42 +3,45 @@ import { queryDictionaryAPI, DictionaryData } from "../lib/dictionaryQuery";
 
 // Define the state structure
 interface DictionaryState {
-  searchQuery: string;
-  wordData: DictionaryData | null;
-  isLoading: boolean;
-  error: string | null;
-  setSearchQuery: (query: string) => void;
-  handleSearch: () => Promise<void>;
-  // You can add other state and actions here as needed
+    searchQuery: string;
+    wordData: DictionaryData | null;
+    isLoading: boolean;
+    error: string | null;
+    setSearchQuery: (query: string) => void;
+    handleSearch: () => Promise<void>;
+    clearResults: () => void;
+    // You can add other state and actions here as needed
 }
 
 // Create the Zustand store
 export const useDictionaryStore = create<DictionaryState>((set, get) => ({
-  // Initial state
-  searchQuery: "",
-  wordData: null,
-  isLoading: false,
-  error: null,
+    // Initial state
+    searchQuery: "",
+    wordData: null,
+    isLoading: false,
+    error: null,
 
-  // Actions
-  setSearchQuery: (query) => set({ searchQuery: query }),
+    // Actions
+    setSearchQuery: (query) => set({ searchQuery: query }),
 
-  handleSearch: async () => {
-    const query = get().searchQuery;
-    if (!query) return;
+    handleSearch: async () => {
+        const query = get().searchQuery;
+        if (!query) return;
 
-    set({ isLoading: true, error: null, wordData: null });
+        set({ isLoading: true, error: null, wordData: null });
 
-    const result = await queryDictionaryAPI(query);
+        const result = await queryDictionaryAPI(query);
 
-    if (result.data) {
-      set({ wordData: result.data, isLoading: false });
-    } else {
-      set({
-        error: result.error || "An unknown error occurred.",
-        isLoading: false,
-        wordData: null,
-      });
-    }
-  },
+        if (result.data) {
+            set({ wordData: result.data, isLoading: false });
+        } else {
+            set({
+                error: result.error || "An unknown error occurred.",
+                isLoading: false,
+                wordData: null,
+            });
+        }
+    },
+
+    clearResults: () => set({ wordData: null, error: null }),
 }));
