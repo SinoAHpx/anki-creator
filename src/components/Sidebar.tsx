@@ -18,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
     useDictionaryStore();
 
   return (
-    <ResizablePanel className="w-60 border-r flex flex-col p-4 space-y-4 bg-muted/20">
+    <ResizablePanel className="border-r flex flex-col p-4 space-y-4 bg-muted/20">
       <Input
         placeholder="Enter a word..."
         value={searchQuery}

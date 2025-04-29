@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { queryDictionaryAPI, DictionaryData } from "../lib/dictionaryQuery";
+import { DictionaryData, queryDictionaryCache } from "../lib/dictionaryQuery";
 
 // Define the state structure
 interface DictionaryState {
@@ -29,7 +29,7 @@ export const useDictionaryStore = create<DictionaryState>((set, get) => ({
 
         set({ isLoading: true, error: null, wordData: null });
 
-        const result = await queryDictionaryAPI(query);
+        const result = await queryDictionaryCache(query);
 
         if (result.data) {
             set({ wordData: result.data, isLoading: false });

@@ -132,75 +132,13 @@ export async function queryDictionaryCache(
             const mappedData = mapEntryToData(entry);
             return { data: mappedData, error: null };
         } else {
-            console.log(`"${searchQuery}" not found in cache.`);
             return {
                 data: null,
-                error: null,
+                error: `"${searchQuery}" not found in cache.`,
             };
         }
     } catch (err) {
         console.error("Error during dictionary cache query:", err);
         return { data: null, error: null };
-    }
-}
-
-/**
- * Queries the external dictionary API for a given word.
- * @param searchQuery The word to search for.
- * @returns A promise that resolves to an object containing either the dictionary data or an error message.
- */
-export async function queryDictionaryAPI(
-    searchQuery: string
-): Promise<QueryResult> {
-    // First try to get the word from the cache
-    const cacheResult = await queryDictionaryCache(searchQuery);
-
-    // If the word was found in the cache, return it immediately
-    if (cacheResult.data) {
-        console.log(`Found "${searchQuery}" in the local dictionary cache.`);
-        return cacheResult;
-    }
-
-    // If not found in cache, proceed with external API query
-    const lowerCaseQuery = searchQuery.toLowerCase();
-    const url = `/query?word=${encodeURIComponent(lowerCaseQuery)}`;
-
-    try {
-        console.log(`Querying dictionary API through proxy: ${url}`);
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            if (response.status === 404) {
-                return {
-                    data: null,
-                    error: `"${searchQuery}" was not found in our dictionary.`,
-                };
-            } else if (response.status >= 500) {
-                return {
-                    data: null,
-                    error: "Dictionary service is currently unavailable. Please try again later.",
-                };
-            } else {
-                console.error(
-                    `API error: ${response.status} ${response.statusText}`
-                );
-                return {
-                    data: null,
-                    error: "Unable to retrieve word information at this time.",
-                };
-            }
-        }
-
-        const entry: RawDictionaryEntry = await response.json();
-        const mappedData = mapEntryToData(entry);
-
-        console.log(`Successfully fetched data for "${searchQuery}" from API.`);
-        return { data: mappedData, error: null };
-    } catch (err) {
-        console.error("Error during dictionary API query:", err);
-        return {
-            data: null,
-            error: "Unable to connect to the dictionary service. Please check your connection and try again.",
-        };
     }
 }
