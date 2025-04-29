@@ -3,6 +3,7 @@ import { Dictionary } from "./components/Dictionary";
 import { Page, Sidebar } from "./components/Sidebar";
 import { Settings } from "./components/Settings";
 import { Library } from "./components/Library";
+import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./components/ui/resizable";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("dictionary");
@@ -14,12 +15,16 @@ function App() {
         switch (currentPage) {
           case "dictionary":
             return (
-              <div className="flex flex-1 overflow-hidden">
+              <ResizablePanelGroup
+                direction="horizontal"
+                className="flex flex-1 overflow-hidden"
+              >
                 <Sidebar setActivePage={setCurrentPage} />
-                <div className="relative flex-1">
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={80} className="relative">
                   <Dictionary />
-                </div>
-              </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
             );
           case "settings":
             return <Settings goBack={goBackToDictionary} />;

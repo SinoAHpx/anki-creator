@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useDictionaryStore } from "@/store/dictionaryStore";
 import { Library, Settings } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { ResizablePanel } from "./ui/resizable";
+
 
 export type Page = "dictionary" | "settings" | "library";
 
@@ -16,7 +18,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
     useDictionaryStore();
 
   return (
-    <aside className="w-80 border-r flex flex-col p-4 space-y-4 bg-muted/20">
+    <ResizablePanel className="w-60 border-r flex flex-col p-4 space-y-4 bg-muted/20">
       <Input
         placeholder="Enter a word..."
         value={searchQuery}
@@ -24,6 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />
       <Button
+        variant="outline"
         onClick={handleSearch}
         disabled={isLoading || !searchQuery}
       >
@@ -50,6 +53,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
           <span className="sr-only">Library</span>
         </Button>
       </div>
-    </aside>
+    </ResizablePanel>
   );
 };

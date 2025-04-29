@@ -45,4 +45,26 @@
        - Dictionary.tsx // add - Added clear button
    ```
 
+## 2024-06-28 
+
+### 1. Add Resizable Sidebar Feature
+
+**Change Type**: enhancement
+
+> **Purpose**: Make the sidebar resizable to improve user experience and allow more flexible use of the app interface
+> **Detailed Description**: Implemented resizable sidebar using shadcn's resizable component, allowing users to adjust the width of the sidebar
+> **Reason for Change**: To provide more flexibility in the UI layout and improve usability
+> **Impact Scope**: Sidebar component and main App layout
+> **API Changes**: None
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal
+
+   ```
+   root
+   - src
+     - components
+       - Sidebar.tsx // update - Converted sidebar to use ResizablePanel
+     - App.tsx // update - Updated layout to use ResizablePanelGroup and ResizableHandle
+   ```
+
 ...
