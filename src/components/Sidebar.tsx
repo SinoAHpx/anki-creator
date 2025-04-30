@@ -2,10 +2,10 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useDictionaryStore } from "@/store/dictionaryStore";
-import { Library, Settings } from "lucide-react";
+import { Library, Settings, Clock, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { ResizablePanel } from "./ui/resizable";
-
+import { ScrollArea } from "./ui/scroll-area";
 
 export type Page = "dictionary" | "settings" | "library";
 
@@ -14,11 +14,22 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
-  const { searchQuery, setSearchQuery, handleSearch, isLoading } =
-    useDictionaryStore();
+  const {
+    searchQuery,
+    setSearchQuery,
+    handleSearch,
+    isLoading,
+    history,
+    removeFromHistory
+  } = useDictionaryStore();
+
+  const handleHistoryItemClick = (word: string) => {
+    setSearchQuery(word);
+    handleSearch();
+  };
 
   return (
-    <ResizablePanel className="border-r flex flex-col p-4 space-y-4 bg-muted/20">
+    <ResizablePanel className="border-r flex flex-col justify-between p-4 space-y-4 bg-muted/20">
       <Input
         placeholder="Enter a word..."
         value={searchQuery}
@@ -32,7 +43,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
       >
         {isLoading ? "Searching..." : "Query"}
       </Button>
-      {/* Additional sidebar content can go here */}
+
+      {/* History Section */}
+      {history.length > 0 && (
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Clock className="h-4 w-4 mr-1" />
+            <span>Recent Searches</span>
+          </div>
+          <ScrollArea className="h-80">
+            <div className="space-y-1">
+              {history.map((word) => (
+                <div key={word} className="flex items-center justify-between group">
+                  <button
+                    className="text-sm py-1 px-2 rounded hover:bg-accent w-full text-left"
+                    onClick={() => handleHistoryItemClick(word)}
+                  >
+                    {word}
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFromHistory(word);
+                    }}
+                  >
+                    <X className="h-3 w-3" />
+                    <span className="sr-only">Remove</span>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
 
       <div className="mt-auto flex flex-row items-center justify-center space-x-2">
         <ThemeToggle />

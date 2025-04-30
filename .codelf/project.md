@@ -57,7 +57,7 @@ root
         - Dictionary.tsx  # Dictionary component with optimized layout (reduced margins and padding)
         - Library.tsx
         - Settings.tsx
-        - Sidebar.tsx  # Resizable sidebar component that uses ResizablePanel
+        - Sidebar.tsx  # Resizable sidebar component with search history display functionality
         - ThemeToggle.tsx
         - dictionary
             - DefinitionItem.tsx
@@ -98,7 +98,7 @@ root
             - progress.tsx
             - radio-group.tsx
             - resizable.tsx  # Provides ResizablePanelGroup, ResizablePanel, and ResizableHandle components
-            - scroll-area.tsx
+            - scroll-area.tsx  # Used for scrollable content like the search history section
             - select.tsx
             - separator.tsx
             - sheet.tsx
@@ -122,7 +122,7 @@ root
         - utils.ts
     - main.tsx
     - store
-        - dictionaryStore.ts
+        - dictionaryStore.ts  # Zustand store for dictionary state with search history functionality and persistent storage
     - vite-env.d.ts
 - src-tauri
     - .gitignore

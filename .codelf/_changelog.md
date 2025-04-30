@@ -88,4 +88,27 @@
        - Dictionary.tsx // update - Reduced padding and spacing for better layout
    ```
 
+## 2024-07-14
+
+### 1. Add Search History Feature
+
+**Change Type**: feature
+
+> **Purpose**: Add a search history feature to allow users to quickly access previously searched words
+> **Detailed Description**: Implemented a search history section in the sidebar that displays previously searched words, allows users to click on them to search again, and provides the ability to remove words from history
+> **Reason for Change**: To improve user experience by providing quick access to previous searches
+> **Impact Scope**: Sidebar component and dictionary store
+> **API Changes**: Added history state and related functions to the dictionary store
+> **Configuration Changes**: Implemented persistent storage for search history using Zustand persist middleware
+> **Performance Impact**: Minimal, improves user workflow
+
+   ```
+   root
+   - src
+     - store
+       - dictionaryStore.ts // update - Added history functionality with Zustand persist middleware
+     - components
+       - Sidebar.tsx // update - Added search history display with click and remove functionality
+   ```
+
 ...
