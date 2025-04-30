@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DefinitionItem } from "./DefinitionItem";
-import { Meaning, DictionaryData } from "@/lib/dictionaryQuery"; // Adjusted path
+import { Meaning, DictionaryData } from "@/lib/dictionary/dictionaryQuery"; // Adjusted path
 
 interface MeaningCardProps {
   meaning: Meaning;

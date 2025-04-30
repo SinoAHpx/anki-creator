@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Definition } from "@/lib/dictionaryQuery"; // Assuming Definition interface is exported
+import { Definition } from "@/lib/dictionary/dictionaryQuery"; // Assuming Definition interface is exported
 
 interface DefinitionItemProps {
   definition: Definition;

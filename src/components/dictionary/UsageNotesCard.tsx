@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { DictionaryData } from "@/lib/dictionaryQuery";
+import { DictionaryData } from "@/lib/dictionary/dictionaryQuery";
 
 type UsageNotes = DictionaryData["usageNotes"];
 

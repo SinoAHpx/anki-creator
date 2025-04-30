@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { DictionaryData, queryDictionaryCache } from "../lib/dictionaryQuery";
+import { DictionaryData, queryDictionaryCache } from "../lib/dictionary/dictionaryQuery";
 import { persist } from "zustand/middleware";
 
 // Define the state structure
@@ -13,7 +13,8 @@ interface DictionaryState {
     handleSearch: () => Promise<void>;
     clearHistory: () => void;
     removeFromHistory: (word: string) => void;
-    // You can add other state and actions here as needed
+    addBookMark: () => void;
+    askAI: () => void;
 }
 
 // Create the Zustand store
@@ -69,6 +70,12 @@ export const useDictionaryStore = create<DictionaryState>()(
                     history: currentHistory.filter(item => item !== word)
                 });
             },
+            addBookMark: () => {
+
+            },
+            askAI: () => {
+
+            }
         }),
         {
             name: "dictionary-storage", // name of the storage
