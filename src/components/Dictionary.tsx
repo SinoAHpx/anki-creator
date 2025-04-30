@@ -28,7 +28,7 @@ export function Dictionary() {
         <>
           <ScrollArea className="pr-2">
             <div className="space-y-4 pb-2">
-              <DictionaryHeader wordData={wordData} />
+              <DictionaryHeader />
 
               <div className="space-y-3">
                 {wordData.meanings.map((meaning, index) => (

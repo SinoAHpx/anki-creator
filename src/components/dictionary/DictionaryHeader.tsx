@@ -4,15 +4,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { DictionaryData } from "@/lib/dictionaryQuery";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus, Sparkles } from "lucide-react";
+import { useDictionaryStore } from "@/store/dictionaryStore";
+export function DictionaryHeader() {
+  const { wordData } = useDictionaryStore();
 
-interface DictionaryHeaderProps {
-  wordData: Pick<DictionaryData, "word" | "pronunciation">;
-}
+  if (!wordData) return null;
 
-export function DictionaryHeader({ wordData }: DictionaryHeaderProps) {
   return (
     <Card>
       <CardHeader>
