@@ -1,71 +1,68 @@
-## {Project Name} (init from readme/docs)
+## Dictionary App with Anki Integration
 
-> {Project Description}
+> A comprehensive dictionary application with Anki flashcard integration.
 
-> {Project Purpose}
+> This application allows users to look up words in a dictionary, get AI-powered explanations, and create Anki flashcards directly from the dictionary entries.
 
-> {Project Status}
+> In active development.
 
-> {Project Team}
+> Developed by a solo developer.
 
-> {Framework/language/other(you think it is important to know)}
+> React, TypeScript, Tauri, Zustand, Shadcn/UI, Bun
 
 
+## Dependencies (from package.json)
 
-## Dependencies (init from programming language specification like package.json, requirements.txt, etc.)
-
-* package1 (version): simple description
-* package2 (version): simple description
+* react (^18.3.0): UI library
+* openai (^4.36.0): OpenAI API client for AI assistance
+* zustand (^4.5.0): State management
+* yanki-connect (^0.1.12): Client for connecting to Anki flashcard application
+* shadcn/ui: Component library
+* tauri (^2.0.0): Desktop application framework
+* vite (^5.0.10): Build tool
+* typescript (^5.3.3): Type system
 
 
 ## Development Environment
 
-> include all the tools and environments needed to run the project
-> makefile introduction (if exists)
+> This project uses Bun as the package manager.
+> The project is built with Vite and Tauri for desktop integration.
+> Development server can be started with `bun run dev`.
 
 
-## Structrue (init from project tree)
+## Structure
 
-> It is essential to consistently refine the analysis down to the file level — this level of granularity is of utmost importance.
-
-> If the number of files is too large, you should at least list all the directories, and provide comments for the parts you consider particularly important.
-
-> In the code block below, add comments to the directories/files to explain their functionality and usage scenarios.
-
-> if you think the directory/file is not important, you can not skip it, just add a simple comment to it.
-
-> but if you think the directory/file is important, you should read the files and add more detail comments on it (e.g. add comments on the functions, classes, and variables. explain the functionality and usage scenarios. write the importance of the directory/file).
 ```
 root
-- .gitignore
-- .prettierrc
-- README.md
-- biome.json
-- bun.lock
-- components.json
-- index.html
-- package.json
+- .gitignore # Git ignore file
+- .prettierrc # Prettier configuration
+- README.md # Project documentation
+- biome.json # Biome linter configuration
+- bun.lock # Bun lock file
+- components.json # Shadcn/UI components configuration
+- index.html # Main HTML entry point
+- package.json # Project dependencies and scripts
 - public
-    - dictionary_cache.json
-    - tauri.svg
-    - vite.svg
+    - dictionary_cache.json # Local cache of dictionary entries
+    - tauri.svg # Tauri logo
+    - vite.svg # Vite logo
 - src
     - App.tsx  # Main application component that uses ResizablePanelGroup for the layout
     - assets
-        - react.svg
+        - react.svg # React logo
     - components
-        - Dictionary.tsx  # Dictionary component with optimized layout (reduced margins and padding)
-        - Library.tsx
-        - Settings.tsx
-        - Sidebar.tsx  # Resizable sidebar component with search history display functionality
-        - ThemeToggle.tsx
+        - Dictionary.tsx  # Dictionary component with optimized layout
+        - Library.tsx # Library component for saved words
+        - Settings.tsx # Settings component
+        - Sidebar.tsx  # Resizable sidebar component with search history
+        - ThemeToggle.tsx # Dark/light mode toggle
         - dictionary
-            - DefinitionItem.tsx
-            - DictionaryHeader.tsx
-            - EtymologyCard.tsx
-            - MeaningCard.tsx
-            - UsageNotesCard.tsx
-        - ui
+            - DefinitionItem.tsx # Component for displaying word definitions
+            - DictionaryHeader.tsx # Header component for dictionary page
+            - EtymologyCard.tsx # Component for displaying word etymology
+            - MeaningCard.tsx # Component for displaying word meanings
+            - UsageNotesCard.tsx # Component for displaying usage notes
+        - ui # Shadcn/UI components
             - accordion.tsx
             - alert-dialog.tsx
             - alert.tsx
@@ -97,8 +94,8 @@ root
             - popover.tsx
             - progress.tsx
             - radio-group.tsx
-            - resizable.tsx  # Provides ResizablePanelGroup, ResizablePanel, and ResizableHandle components
-            - scroll-area.tsx  # Used for scrollable content like the search history section
+            - resizable.tsx  # Provides ResizablePanelGroup components
+            - scroll-area.tsx  # Used for scrollable content
             - select.tsx
             - separator.tsx
             - sheet.tsx
@@ -114,35 +111,37 @@ root
             - toggle.tsx
             - tooltip.tsx
     - hooks
-        - use-mobile.ts
-    - index.css
+        - use-mobile.ts # Hook for detecting mobile devices
+    - index.css # Global CSS
     - lib
-        - dictionaryQuery.ts
-        - llmService.ts
-        - utils.ts
-    - main.tsx
+        - anki.ts # Anki integration library for creating decks and cards
+        - dictionary
+            - dictionaryQuery.ts # Dictionary query functionality with local cache support
+        - llmService.ts # LLM service for AI-powered explanations
+        - utils.ts # Utility functions
+    - main.tsx # Main React entry point
     - store
-        - dictionaryStore.ts  # Zustand store for dictionary state with search history functionality and persistent storage
-    - vite-env.d.ts
+        - dictionaryStore.ts  # Zustand store for dictionary state with search history, bookmarking, and AI features
+    - vite-env.d.ts # Vite environment types
 - src-tauri
-    - .gitignore
-    - Cargo.lock
-    - Cargo.toml
-    - build.rs
+    - .gitignore # Tauri-specific gitignore
+    - Cargo.lock # Rust dependencies lock file
+    - Cargo.toml # Rust dependencies
+    - build.rs # Tauri build script
     - capabilities
-        - default.json
+        - default.json # Tauri capabilities configuration
     - gen
         - schemas
-            - acl-manifests.json
-            - capabilities.json
-            - desktop-schema.json
-            - macOS-schema.json
+            - acl-manifests.json # Tauri ACL manifests
+            - capabilities.json # Tauri capabilities
+            - desktop-schema.json # Tauri desktop schema
+            - macOS-schema.json # Tauri macOS schema
     - src
-        - config.rs
-        - lib.rs
-        - main.rs
-    - tauri.conf.json
-- tsconfig.json
-- tsconfig.node.json
-- vite.config.ts
+        - config.rs # Tauri configuration
+        - lib.rs # Tauri library
+        - main.rs # Tauri main entry point
+    - tauri.conf.json # Tauri configuration
+- tsconfig.json # TypeScript configuration
+- tsconfig.node.json # TypeScript node configuration
+- vite.config.ts # Vite configuration
 ```

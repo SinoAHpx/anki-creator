@@ -111,4 +111,27 @@
        - Sidebar.tsx // update - Added search history display with click and remove functionality
    ```
 
+## 2024-07-15
+
+### 1. Add Anki Integration with AI-Enhanced Flashcards
+
+**Change Type**: feature
+
+> **Purpose**: Integrate Anki flashcard functionality with AI-enhanced explanations
+> **Detailed Description**: Implemented Anki integration that allows users to add the current word to Anki as a flashcard, with options to include AI-generated explanations for better learning
+> **Reason for Change**: To enhance the vocabulary learning experience by connecting the dictionary app with Anki spaced repetition learning system
+> **Impact Scope**: Dictionary store, Anki integration library, AI service
+> **API Changes**: Added Anki integration functions, implemented askAI and addBookMark functionality in dictionary store
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, adds valuable learning functionality
+
+   ```
+   root
+   - src
+     - lib
+       - anki.ts // add - Created Anki integration library with functions to create decks and cards
+     - store
+       - dictionaryStore.ts // update - Added AI explanation and Anki bookmark functionality
+   ```
+
 ...

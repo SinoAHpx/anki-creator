@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  // Set the third parameter to '' to load all env regardless of the `` prefix.
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
@@ -26,24 +26,19 @@ export default defineConfig(({ mode }) => {
       port: 1420,
       strictPort: true,
       host: env.TAURI_DEV_HOST || false,
-      proxy: {
-        // Proxy API requests to avoid CORS issues
-        "/query": {
-          target: env.VITE_DICTIONARY_URL,
-          changeOrigin: true,
-          secure: false,
-        },
-      },
       hmr: env.TAURI_DEV_HOST
         ? {
-            protocol: "ws",
-            host: env.TAURI_DEV_HOST,
-            port: 1421,
-          }
+          protocol: "ws",
+          host: env.TAURI_DEV_HOST,
+          port: 1421,
+        }
         : undefined,
       watch: {
         // 3. tell vite to ignore watching `src-tauri`
         ignored: ["**/src-tauri/**"],
+      },
+      headers: {
+        "Access-Control-Allow-Origin": "*",
       },
     },
   };

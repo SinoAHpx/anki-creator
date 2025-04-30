@@ -20,10 +20,10 @@ export default class LLMService {
         provider?: string;
         systemPrompt?: string;
     } = {}) {
-        this.apiKey = apiKey || import.meta.env.VITE_API_KEY;
-        this.apiUrl = apiUrl || import.meta.env.VITE_API_URL;
-        this.model = model || import.meta.env.VITE_MODEL;
-        this.provider = provider || import.meta.env.VITE_LLM_PROVIDER;
+        this.apiKey = apiKey || import.meta.env.API_KEY;
+        this.apiUrl = apiUrl || import.meta.env.API_URL;
+        this.model = model || import.meta.env.MODEL;
+        this.provider = provider || import.meta.env.LLM_PROVIDER;
         this.systemPrompt = systemPrompt || "You are a helpful assistant.";
     }
 

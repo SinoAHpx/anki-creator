@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { DictionaryData, queryDictionaryCache } from "../lib/dictionary/dictionaryQuery";
 import { persist } from "zustand/middleware";
+import { createCard, createCardWithAI } from "../lib/anki";
+import LLMService from "../lib/llmService";
 
 // Define the state structure
 interface DictionaryState {
@@ -9,12 +11,14 @@ interface DictionaryState {
     isLoading: boolean;
     error: string | null;
     history: string[];
+    aiExplanation: string | null;
+    isAILoading: boolean;
     setSearchQuery: (query: string) => void;
     handleSearch: () => Promise<void>;
     clearHistory: () => void;
     removeFromHistory: (word: string) => void;
-    addBookMark: () => void;
-    askAI: () => void;
+    addBookMark: () => Promise<void>;
+    askAI: () => Promise<void>;
 }
 
 // Create the Zustand store
@@ -27,6 +31,8 @@ export const useDictionaryStore = create<DictionaryState>()(
             isLoading: false,
             error: null,
             history: [],
+            aiExplanation: null,
+            isAILoading: false,
 
             // Actions
             setSearchQuery: (query) => set({ searchQuery: query }),
@@ -35,7 +41,7 @@ export const useDictionaryStore = create<DictionaryState>()(
                 const query = get().searchQuery.trim();
                 if (!query) return;
 
-                set({ isLoading: true, error: null, wordData: null });
+                set({ isLoading: true, error: null, wordData: null, aiExplanation: null });
 
                 const result = await queryDictionaryCache(query);
 
@@ -70,11 +76,75 @@ export const useDictionaryStore = create<DictionaryState>()(
                     history: currentHistory.filter(item => item !== word)
                 });
             },
-            addBookMark: () => {
 
+            addBookMark: async () => {
+                const { wordData, aiExplanation } = get();
+                if (!wordData) return;
+
+                try {
+                    // Create definition HTML from meanings
+                    const definitionHtml = wordData.meanings.map(meaning => {
+                        const definitions = meaning.definitions.map((def, index) =>
+                            `<div>${index + 1}. ${def.definition || ''}${def.example ? `<br><i>Example: ${def.example}</i>` : ''}</div>`
+                        ).join('');
+
+                        return `<div><strong>${meaning.partOfSpeech}</strong><div>${definitions}</div></div>`;
+                    }).join('<br>');
+
+                    // If we have an AI explanation, use createCardWithAI
+                    if (aiExplanation) {
+                        await createCardWithAI(
+                            "Dictionary",
+                            wordData.word,
+                            definitionHtml,
+                            aiExplanation
+                        );
+                    } else {
+                        // Otherwise use regular createCard
+                        const frontTemplate = definitionHtml;
+                        const backTemplate = `<div><h1>${wordData.word}</h1></div>`;
+                        await createCard("Dictionary", frontTemplate, backTemplate);
+                    }
+
+                    // Notify user of success
+                    console.log(`Added "${wordData.word}" to Anki.`);
+                } catch (error) {
+                    console.error("Failed to add card to Anki:", error);
+                }
             },
-            askAI: () => {
 
+            askAI: async () => {
+                const { wordData } = get();
+                if (!wordData) return;
+
+                set({ isAILoading: true });
+
+                try {
+                    const llmService = new LLMService({
+                        systemPrompt: "You are a helpful AI assistant that provides clear and concise explanations of vocabulary words with examples that make them easy to understand and remember."
+                    });
+
+                    const prompt = `
+                        Word: ${wordData.word}
+                        
+                        I need a clear explanation of this word that:
+                        1. Explains the meaning in simple terms
+                        2. Provides 2-3 practical example sentences showing how to use it
+                        3. Mentions any common collocations or phrases
+                        4. If relevant, notes any important usage contexts (formal/informal, AmE/BrE differences, etc.)
+                        
+                        Format your response in clean HTML with appropriate heading and paragraph tags.
+                    `;
+
+                    const explanation = await llmService.chatCompletion(prompt);
+                    set({ aiExplanation: explanation, isAILoading: false });
+                } catch (error) {
+                    console.error("Failed to get AI explanation:", error);
+                    set({
+                        aiExplanation: "Sorry, I couldn't generate an explanation at this time.",
+                        isAILoading: false
+                    });
+                }
             }
         }),
         {
