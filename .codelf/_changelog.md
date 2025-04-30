@@ -1,5 +1,6 @@
 ## 2023-12-20 15:45:00
 
+
 ### 1. Optimize Dictionary Query Functionality
 
 **Change Type**: improvement
@@ -154,6 +155,37 @@
      - store
        - dictionaryStore.ts // update - Added toast notifications for success and error states
      - App.tsx // update - Added Toaster component for displaying notifications
+   ```
+
+## 2024-07-18
+
+### 1. Add Global Keyboard Shortcut Functionality
+
+**Change Type**: feature
+
+> **Purpose**: Implement global keyboard shortcuts for common app actions with user-configurable key bindings
+> **Detailed Description**: Added Tauri global shortcut plugin integration, created a settings UI for customizing shortcuts, and implemented a hook system to register and handle shortcuts throughout the application
+> **Reason for Change**: To enhance user productivity and provide a more desktop-like experience with keyboard shortcuts
+> **Impact Scope**: Settings component, Rust backend, and app-wide functionality
+> **API Changes**: Added Tauri commands to register and manage global shortcuts, introduced settings store for shortcut configuration
+> **Configuration Changes**: Added @tauri-apps/plugin-global-shortcut to package.json and tauri-plugin-global-shortcut to Cargo.toml
+> **Performance Impact**: Minimal, significantly improves user workflow and accessibility
+
+   ```
+   root
+   - src
+     - store
+       - settingsStore.ts // add - Created settings store for managing keyboard shortcuts
+     - components
+       - Settings.tsx // update - Added keyboard shortcut configuration UI
+     - hooks
+       - use-shortcuts.ts // add - Created hook for managing shortcut registration and handling
+     - App.tsx // update - Integrated shortcut hook
+   - src-tauri
+     - src
+       - lib.rs // update - Added global shortcut plugin and Tauri commands
+     - Cargo.toml // update - Added global shortcut plugin dependency
+   - package.json // update - Added global shortcut plugin dependency
    ```
 
 ...

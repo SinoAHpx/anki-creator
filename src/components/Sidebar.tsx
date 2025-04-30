@@ -31,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
   return (
     <ResizablePanel className="border-r flex flex-col justify-between p-4 space-y-4 bg-muted/20">
       <Input
+        id="search-input"
         placeholder="Enter a word..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}

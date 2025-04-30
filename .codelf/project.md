@@ -19,6 +19,7 @@
 * yanki-connect (^0.1.12): Client for connecting to Anki flashcard application
 * shadcn/ui: Component library
 * tauri (^2.0.0): Desktop application framework
+* @tauri-apps/plugin-global-shortcut (^2.0.0): Tauri global shortcut plugin
 * vite (^5.0.10): Build tool
 * typescript (^5.3.3): Type system
 
@@ -53,7 +54,7 @@ root
     - components
         - Dictionary.tsx  # Dictionary component with optimized layout
         - Library.tsx # Library component for saved words
-        - Settings.tsx # Settings component
+        - Settings.tsx # Settings component with keyboard shortcut configuration
         - Sidebar.tsx  # Resizable sidebar component with search history
         - ThemeToggle.tsx # Dark/light mode toggle
         - dictionary
@@ -112,6 +113,7 @@ root
             - tooltip.tsx
     - hooks
         - use-mobile.ts # Hook for detecting mobile devices
+        - use-shortcuts.ts # Hook for managing global keyboard shortcuts
     - index.css # Global CSS
     - lib
         - anki.ts # Anki integration library for creating decks and cards
@@ -122,11 +124,12 @@ root
     - main.tsx # Main React entry point
     - store
         - dictionaryStore.ts  # Zustand store for dictionary state with search history, bookmarking, and AI features
+        - settingsStore.ts # Zustand store for application settings including keyboard shortcuts
     - vite-env.d.ts # Vite environment types
 - src-tauri
     - .gitignore # Tauri-specific gitignore
     - Cargo.lock # Rust dependencies lock file
-    - Cargo.toml # Rust dependencies
+    - Cargo.toml # Rust dependencies with global-shortcut plugin
     - build.rs # Tauri build script
     - capabilities
         - default.json # Tauri capabilities configuration
@@ -138,7 +141,7 @@ root
             - macOS-schema.json # Tauri macOS schema
     - src
         - config.rs # Tauri configuration
-        - lib.rs # Tauri library
+        - lib.rs # Tauri library with global shortcut functionality
         - main.rs # Tauri main entry point
     - tauri.conf.json # Tauri configuration
 - tsconfig.json # TypeScript configuration
