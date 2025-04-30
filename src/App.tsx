@@ -4,6 +4,7 @@ import { Page, Sidebar } from "./components/Sidebar";
 import { Settings } from "./components/Settings";
 import { Library } from "./components/Library";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./components/ui/resizable";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("dictionary");
@@ -34,6 +35,7 @@ function App() {
             return null;
         }
       })()}
+      <Toaster position="top-right" />
     </div>
   );
 }

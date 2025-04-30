@@ -134,4 +134,26 @@
        - dictionaryStore.ts // update - Added AI explanation and Anki bookmark functionality
    ```
 
+## 2024-07-16
+
+### 1. Add Toast Notifications for User Feedback
+
+**Change Type**: enhancement
+
+> **Purpose**: Implement toast notifications to provide clear feedback for user actions
+> **Detailed Description**: Added Shadcn UI's sonner toast component to provide real-time feedback when users add words to Anki or generate AI explanations
+> **Reason for Change**: To improve user experience by providing clear, non-intrusive feedback for important actions
+> **Impact Scope**: Dictionary store and App component
+> **API Changes**: Updated action functions to display toast notifications
+> **Configuration Changes**: Added Toaster component to App.tsx
+> **Performance Impact**: Minimal, greatly improves user feedback
+
+   ```
+   root
+   - src
+     - store
+       - dictionaryStore.ts // update - Added toast notifications for success and error states
+     - App.tsx // update - Added Toaster component for displaying notifications
+   ```
+
 ...

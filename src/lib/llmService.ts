@@ -2,14 +2,14 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { generateText } from "ai"
 
 const volcano = createOpenAICompatible({
-    apiKey: process.env.KEY!,
-    baseURL: process.env.URL!,
+    apiKey: 'process.env.KEY!',
+    baseURL: 'process.env.URL!',
     name: 'volcano',
 });
 
 export async function getLLMResult(prompt: string, systemPromot: string) {
     const { text } = await generateText({
-        model: volcano(process.env.MODEL!),
+        model: volcano('process.env.MODEL!'),
         prompt: prompt,
         system: systemPromot
     })

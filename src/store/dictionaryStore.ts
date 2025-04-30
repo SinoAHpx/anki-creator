@@ -2,7 +2,8 @@ import { create } from "zustand";
 import { DictionaryData, queryDictionaryCache } from "../lib/dictionary/dictionaryQuery";
 import { persist } from "zustand/middleware";
 import { createCard, createCardWithAI } from "../lib/anki";
-import LLMService from "../lib/llmService";
+import { getLLMResult } from "../lib/llmService";
+import { toast } from "sonner";
 
 // Define the state structure
 interface DictionaryState {
@@ -99,17 +100,29 @@ export const useDictionaryStore = create<DictionaryState>()(
                             definitionHtml,
                             aiExplanation
                         );
+
+                        toast.success(`Added "${wordData.word}" to Anki with AI explanation`, {
+                            description: "Card created with dictionary definition and AI explanation",
+                            duration: 3000,
+                        });
                     } else {
                         // Otherwise use regular createCard
                         const frontTemplate = definitionHtml;
                         const backTemplate = `<div><h1>${wordData.word}</h1></div>`;
                         await createCard("Dictionary", frontTemplate, backTemplate);
-                    }
 
-                    // Notify user of success
-                    console.log(`Added "${wordData.word}" to Anki.`);
+                        toast.success(`Added "${wordData.word}" to Anki`, {
+                            description: "Card created with dictionary definition",
+                            duration: 3000,
+                        });
+                    }
                 } catch (error) {
                     console.error("Failed to add card to Anki:", error);
+
+                    toast.error(`Failed to add "${wordData.word}" to Anki`, {
+                        description: String(error),
+                        duration: 5000,
+                    });
                 }
             },
 
@@ -120,10 +133,6 @@ export const useDictionaryStore = create<DictionaryState>()(
                 set({ isAILoading: true });
 
                 try {
-                    const llmService = new LLMService({
-                        systemPrompt: "You are a helpful AI assistant that provides clear and concise explanations of vocabulary words with examples that make them easy to understand and remember."
-                    });
-
                     const prompt = `
                         Word: ${wordData.word}
                         
@@ -136,13 +145,25 @@ export const useDictionaryStore = create<DictionaryState>()(
                         Format your response in clean HTML with appropriate heading and paragraph tags.
                     `;
 
-                    const explanation = await llmService.chatCompletion(prompt);
+                    const systemPrompt = "You are a helpful AI assistant that provides clear and concise explanations of vocabulary words with examples that make them easy to understand and remember.";
+
+                    const explanation = await getLLMResult(prompt, systemPrompt);
                     set({ aiExplanation: explanation, isAILoading: false });
+
+                    toast.success(`AI explanation generated for "${wordData.word}"`, {
+                        description: "You can now add this word to Anki with enhanced explanation",
+                        duration: 3000,
+                    });
                 } catch (error) {
                     console.error("Failed to get AI explanation:", error);
                     set({
                         aiExplanation: "Sorry, I couldn't generate an explanation at this time.",
                         isAILoading: false
+                    });
+
+                    toast.error(`Failed to generate AI explanation`, {
+                        description: "Please check your API key and internet connection",
+                        duration: 5000,
                     });
                 }
             }
