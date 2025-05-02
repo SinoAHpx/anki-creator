@@ -10,8 +10,14 @@ export interface ShortcutConfig {
 
 interface SettingsState {
     shortcuts: ShortcutConfig[];
+    startWithSystem: boolean;
+    hideDockIcon: boolean;
+    hideTrayIcon: boolean;
     updateShortcut: (name: string, newShortcut: string) => void;
     getShortcutByAction: (action: string) => ShortcutConfig | undefined;
+    updateStartWithSystem: (value: boolean) => void;
+    updateHideDockIcon: (value: boolean) => void;
+    updateHideTrayIcon: (value: boolean) => void;
 }
 
 // Default shortcuts
@@ -28,6 +34,9 @@ export const useSettingsStore = create<SettingsState>()(
     persist(
         (set, get) => ({
             shortcuts: defaultShortcuts,
+            startWithSystem: false,
+            hideDockIcon: false,
+            hideTrayIcon: false,
 
             updateShortcut: (name, newShortcut) => {
                 set((state) => ({
@@ -41,6 +50,18 @@ export const useSettingsStore = create<SettingsState>()(
 
             getShortcutByAction: (action) => {
                 return get().shortcuts.find((shortcut) => shortcut.action === action);
+            },
+
+            updateStartWithSystem: (value) => {
+                set({ startWithSystem: value });
+            },
+
+            updateHideDockIcon: (value) => {
+                set({ hideDockIcon: value });
+            },
+
+            updateHideTrayIcon: (value) => {
+                set({ hideTrayIcon: value });
             },
         }),
         {

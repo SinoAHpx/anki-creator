@@ -289,4 +289,27 @@ cbe74b3 - feat: add short cut registeration (AHpx, 2025-05-02)
    - package.json // update - Added global shortcut plugin dependency
    ```
 
+## 2024-07-22
+
+### 1. Add System Integration Settings
+
+**Change Type**: feature
+
+> **Purpose**: Add system integration settings to control app behavior on macOS
+> **Detailed Description**: Implemented settings UI for controlling app integration with the system including start with system, hide dock icon, and hide tray icon options
+> **Reason for Change**: To provide users with more control over how the app integrates with their system
+> **Impact Scope**: Settings component and settings store
+> **API Changes**: Extended settings store with system integration options
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, adds user customization options
+
+   ```
+   root
+   - src
+     - components
+       - Settings.tsx // update - Added system integration settings UI with toggle switches
+     - store
+       - settingsStore.ts // update - Extended with system integration settings (startWithSystem, hideDockIcon, hideTrayIcon)
+   ```
+
 ...

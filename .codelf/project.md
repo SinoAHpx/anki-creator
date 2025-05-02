@@ -43,6 +43,7 @@
 > Search field focus with keyboard shortcut
 > Complete search history with date grouping in Library view
 > Visual tracking of words added to Anki
+> System integration settings (start with system, hide dock icon, hide tray icon)
 
 
 ## Structure
