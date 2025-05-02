@@ -138,6 +138,7 @@ root
         - time.ts # Date formatting and grouping utilities
         - utils.ts # Utility functions
     - main.tsx # Main React entry point
+    - nodeModulePolyfills.js # Polyfills for Node.js modules in browser environment
     - store
         - dictionaryStore.ts  # Zustand store for dictionary state with search history, bookmarking, and AI features
         - settingsStore.ts # Zustand store for application settings including keyboard shortcuts

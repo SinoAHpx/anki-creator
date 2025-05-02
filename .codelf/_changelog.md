@@ -312,4 +312,25 @@ cbe74b3 - feat: add short cut registeration (AHpx, 2025-05-02)
        - settingsStore.ts // update - Extended with system integration settings (startWithSystem, hideDockIcon, hideTrayIcon)
    ```
 
+## 2024-07-23
+
+### 1. Fix Build Issues with Node.js Modules in Browser Environment
+
+**Change Type**: bugfix
+
+> **Purpose**: Resolve build error with Node.js modules being used in browser environment
+> **Detailed Description**: Fixed build errors related to Node.js modules (like node:util, node:process, node:child_process) being imported in Vite's browser environment by creating polyfills and configuring proper module aliasing
+> **Reason for Change**: To fix the Tauri build process that was failing due to incompatible Node.js modules in browser context
+> **Impact Scope**: Build configuration and Node.js module handling
+> **API Changes**: None
+> **Configuration Changes**: Updated Vite configuration to properly handle Node.js modules
+> **Performance Impact**: None, purely build-time improvement
+
+   ```
+   root
+   - src
+     - nodeModulePolyfills.js // add - Created polyfills for Node.js modules in browser environment
+   - vite.config.ts // update - Added proper aliasing for Node.js modules
+   ```
+
 ...

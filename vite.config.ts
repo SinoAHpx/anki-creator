@@ -14,6 +14,25 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        // Alias Node.ts modules to our polyfills
+        "default-browser-id": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+        "default-browser": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+        "open": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+        "node:util": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+        "node:process": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+        "node:child_process": path.resolve(__dirname, "./nodeModulePolyfills.ts"),
+      },
+    },
+
+    // Add optimizeDeps to exclude problematic packages
+    optimizeDeps: {
+      exclude: ['default-browser-id', 'default-browser', 'open'],
+    },
+
+    // Handle node modules in browser
+    build: {
+      rollupOptions: {
+        external: ['default-browser-id', 'default-browser', 'open'],
       },
     },
 
