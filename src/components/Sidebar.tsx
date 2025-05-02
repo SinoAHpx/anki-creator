@@ -7,8 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { ResizablePanel } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { useSettingsStore } from "@/store/settingsStore";
-import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { registerShortcut } from "@/lib/utils";
 
 export type Page = "dictionary" | "settings" | "library";
 
@@ -26,7 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
     removeFromHistory
   } = useDictionaryStore();
 
-  const { getShortcutByAction, shortcuts } = useSettingsStore();
+  const { shortcuts } = useSettingsStore();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleHistoryItemClick = (word: string) => {
@@ -34,71 +33,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
     handleSearch();
   };
 
-  // Function to focus the search input
-  const focusSearchInput = async () => {
-    try {
-      // Get the current window instance
-      const appWindow = await getCurrentWindow();
-
-      // Check if window is visible, if not show it
-      const isVisible = await appWindow.isVisible();
-      if (!isVisible) {
-        await appWindow.show();
-        await appWindow.setFocus();
-      }
-
-      // Focus the search input element
-      if (searchInputRef.current) {
-        searchInputRef.current.focus();
-        console.log('to set the focus on the input');
-
-      } else {
-        console.log('we didnt set the shortcut of the key');
-      }
-    } catch (error) {
-      console.error("Error focusing search input:", error);
-    }
-  };
-
-  // Register and unregister global shortcut
   useEffect(() => {
-    const shortcut = getShortcutByAction("focusSearch");
-    if (!shortcut) return;
-
-    const registerShortcut = async () => {
-      try {
-        // Unregister shortcut if it already exists to prevent duplicates
-        try {
-          await unregister(shortcut.shortcut);
-        } catch (e) {
-          // Ignore errors from unregister - shortcut might not be registered yet
-        }
-
-        // Register the new shortcut
-        await register(shortcut.shortcut, () => {
-          focusSearchInput();
-        });
-        console.log(`Registered shortcut: ${shortcut.shortcut}`);
-      } catch (error) {
-        console.error("Failed to register shortcut:", error);
-      }
-    };
-
-    registerShortcut();
-
-    // Cleanup: unregister shortcut when component unmounts
-    return () => {
-      const cleanup = async () => {
-        try {
-          await unregister(shortcut.shortcut);
-          console.log(`Unregistered shortcut: ${shortcut.shortcut}`);
-        } catch (e) {
-          // Ignore errors from unregister on cleanup
-        }
-      };
-      cleanup();
-    };
-  }, [getShortcutByAction, shortcuts]); // Add shortcuts dependency to re-register when shortcuts change
+    registerShortcut(searchInputRef);
+  }, [shortcuts]);
 
   return (
     <ResizablePanel className="border-r flex flex-col justify-between p-4 space-y-4 bg-muted/20">
@@ -107,6 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ setActivePage }) => {
         ref={searchInputRef}
         placeholder="Enter a word..."
         value={searchQuery}
+        autoFocus
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       />

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { DictionaryData, queryDictionaryCache } from "../lib/dictionary/dictionaryQuery";
 import { persist } from "zustand/middleware";
-import { createCard, createCardWithAI } from "../lib/anki";
+import { createCard } from "../lib/anki";
 import { getLLMResult } from "../lib/llmService";
 import { toast } from "sonner";
 
