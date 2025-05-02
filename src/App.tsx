@@ -5,42 +5,7 @@ import { Settings } from "./components/Settings";
 import { Library } from "./components/Library";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./components/ui/resizable";
 import { Toaster } from "./components/ui/sonner";
-import { Menu, MenuItem } from '@tauri-apps/api/menu';
-import { TrayIcon } from '@tauri-apps/api/tray';
-import { exit } from '@tauri-apps/plugin-process';
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { defaultWindowIcon } from '@tauri-apps/api/app';
-
-async function setupTray() {
-  const showItem = await MenuItem.new({
-    id: 'show', text: 'Show App', action: () => {
-      const currentWindow = getCurrentWindow()
-      currentWindow.setFocus()
-    }
-  });
-  const quitItem = await MenuItem.new({
-    id: 'quit', text: 'Quit', action: () => {
-      exit(0)
-    },
-  });
-
-  try {
-    const tray = TrayIcon.getById('main')
-    if (tray === null) {
-      await TrayIcon.new({
-        tooltip: 'Anki Creator',
-        menu: await Menu.new({
-          items: [showItem, quitItem],
-        }),
-        icon: await defaultWindowIcon() || [],
-        id: 'main'
-      });
-    }
-
-  } catch (e) {
-    console.error('Failed to create tray icon:', e);
-  }
-}
+import { setupTray } from "./lib/utils";
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("dictionary");

@@ -21,19 +21,7 @@ const defaultShortcuts: ShortcutConfig[] = [
         shortcut: "CommandOrControl+Space",
         description: "Focus search bar",
         action: "focusSearch",
-    },
-    {
-        name: "saveToAnki",
-        shortcut: "CommandOrControl+S",
-        description: "Save current word to Anki",
-        action: "saveToAnki",
-    },
-    {
-        name: "askAI",
-        shortcut: "CommandOrControl+A",
-        description: "Generate AI explanation",
-        action: "askAI",
-    },
+    }
 ];
 
 export const useSettingsStore = create<SettingsState>()(
