@@ -5,14 +5,14 @@ import { Settings } from "./components/Settings";
 import { Library } from "./components/Library";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./components/ui/resizable";
 import { Toaster } from "./components/ui/sonner";
-import { useShortcuts } from "./hooks/use-shortcuts";
+import { register } from '@tauri-apps/plugin-global-shortcut';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("dictionary");
   const goBackToDictionary = () => setCurrentPage("dictionary");
-
-  // Initialize shortcuts
-  useShortcuts();
+  register('CommandOrControl+Shift+C', () => {
+    console.log('Shortcut triggered');
+  })
 
   return (
     <div className="h-screen flex flex-col bg-background text-foreground">
