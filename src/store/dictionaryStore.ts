@@ -45,7 +45,7 @@ export const useDictionaryStore = create<DictionaryState>()(
                 set({ isLoading: true, error: null, wordData: null, aiExplanation: null });
 
                 const result = await queryDictionaryCache(query);
-
+                console.log('result', result);
                 if (result.data) {
                     // Add to history if successful
                     const currentHistory = get().history;
@@ -79,7 +79,7 @@ export const useDictionaryStore = create<DictionaryState>()(
             },
 
             addBookMark: async () => {
-                const { wordData, aiExplanation } = get();
+                const { wordData } = get();
                 if (!wordData) return;
 
                 try {
@@ -92,30 +92,14 @@ export const useDictionaryStore = create<DictionaryState>()(
                         return `<div><strong>${meaning.partOfSpeech}</strong><div>${definitions}</div></div>`;
                     }).join('<br>');
 
-                    // If we have an AI explanation, use createCardWithAI
-                    if (aiExplanation) {
-                        await createCardWithAI(
-                            "Dictionary",
-                            wordData.word,
-                            definitionHtml,
-                            aiExplanation
-                        );
+                    const frontTemplate = definitionHtml;
+                    const backTemplate = `<div><h1>${wordData.word}</h1></div>`;
+                    await createCard("Dictionary", frontTemplate, backTemplate);
 
-                        toast.success(`Added "${wordData.word}" to Anki with AI explanation`, {
-                            description: "Card created with dictionary definition and AI explanation",
-                            duration: 3000,
-                        });
-                    } else {
-                        // Otherwise use regular createCard
-                        const frontTemplate = definitionHtml;
-                        const backTemplate = `<div><h1>${wordData.word}</h1></div>`;
-                        await createCard("Dictionary", frontTemplate, backTemplate);
-
-                        toast.success(`Added "${wordData.word}" to Anki`, {
-                            description: "Card created with dictionary definition",
-                            duration: 3000,
-                        });
-                    }
+                    toast.success(`Added "${wordData.word}" to Anki`, {
+                        description: "Card created with dictionary definition",
+                        duration: 3000,
+                    });
                 } catch (error) {
                     console.error("Failed to add card to Anki:", error);
 

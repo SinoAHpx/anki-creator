@@ -11,19 +11,29 @@ export function UsageNotesCard({ usageNotes }: UsageNotesCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">General Usage Notes</CardTitle>
+        <CardTitle className="text-lg">Usage Notes</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2 text-sm">
+      <CardContent className="space-y-3 text-sm">
         {usageNotes.general && (
-          <p>
-            {usageNotes.general}
-          </p>
+          <div>
+            <strong>General:</strong> {usageNotes.general}
+          </div>
         )}
-        {usageNotes.specialCases && (
-          <p>
-            <strong>Special Cases:</strong> {usageNotes.specialCases}
-          </p>
-        )}
+        {usageNotes.specialCases &&
+          Object.keys(usageNotes.specialCases).length > 0 && (
+            <div>
+              <strong>Special Cases:</strong>
+              <ul className="list-disc list-inside pl-4 mt-1 space-y-1">
+                {Object.entries(usageNotes.specialCases).map(
+                  ([key, value]) => (
+                    <li key={key}>
+                      <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span> {value}
+                    </li>
+                  )
+                )}
+              </ul>
+            </div>
+          )}
         {usageNotes.regionalVariations &&
           Object.keys(usageNotes.regionalVariations).length > 0 && (
             <div>
