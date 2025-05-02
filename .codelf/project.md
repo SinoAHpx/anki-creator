@@ -41,6 +41,8 @@
 > Global keyboard shortcuts for improved workflow
 > System tray menu with restart option
 > Search field focus with keyboard shortcut
+> Complete search history with date grouping in Library view
+> Visual tracking of words added to Anki
 
 
 ## Structure
@@ -132,6 +134,7 @@ root
         - dictionary
             - dictionaryQuery.ts # Dictionary query functionality with local cache support
         - llmService.ts # LLM service for AI-powered explanations
+        - time.ts # Date formatting and grouping utilities
         - utils.ts # Utility functions
     - main.tsx # Main React entry point
     - store

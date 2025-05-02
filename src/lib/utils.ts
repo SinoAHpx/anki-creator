@@ -47,8 +47,6 @@ export async function setupTray() {
     }
 }
 
-
-
 export const registerShortcut = async (searchInputRef: React.RefObject<HTMLInputElement>) => {
     const { getShortcutByAction } = useSettingsStore.getState();
     const shortcut = getShortcutByAction("focusSearch");

@@ -1,3 +1,49 @@
+## 2024-07-21
+
+### 1. Improve Library UI and Extract Time Utilities
+
+**Change Type**: improvement
+
+> **Purpose**: Enhance the Library component and extract date-related functions to a utility file
+> **Detailed Description**: Made history entries more compact using badges instead of list items, and extracted date formatting and grouping logic into a reusable time utility file
+> **Reason for Change**: To improve visual density of the Library view and follow DRY principles for date-related functionality
+> **Impact Scope**: Library component and new time utility file
+> **API Changes**: Created reusable date formatting and grouping functions
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, improves code organization and visual presentation
+
+   ```
+   root
+   - src
+     - components
+       - Library.tsx // update - Converted history entries to compact badges
+     - lib
+       - time.ts // add - Created utility file for date formatting and grouping functions
+   ```
+
+## 2024-07-20
+
+### 1. Enhanced Library View with Full Search History
+
+**Change Type**: feature
+
+> **Purpose**: Enhance the Library component to display all search history grouped by date
+> **Detailed Description**: Implemented a complete history view in the Library component that displays all words ever searched, grouped by date, with visual indicators for words added to Anki
+> **Reason for Change**: To provide users with a comprehensive view of their vocabulary learning journey and track their Anki flashcard progress
+> **Impact Scope**: Library component, dictionary store
+> **API Changes**: Added full history tracking with timestamps, enhanced dictionary store with Anki card tracking
+> **Configuration Changes**: Updated persist middleware to store Anki card information
+> **Performance Impact**: Minimal, greatly improves user experience and learning tracking
+
+   ```
+   root
+   - src
+     - store
+       - dictionaryStore.ts // update - Added ankiCards tracking and full history functionality
+     - components
+       - Library.tsx // update - Enhanced with complete history view grouped by date with Anki indicators
+   ```
+
 ## 2025-05-02
 
 ### 1. Add Tray Menu with Restart Option

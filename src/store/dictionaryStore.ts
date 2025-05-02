@@ -12,6 +12,7 @@ interface DictionaryState {
     isLoading: boolean;
     error: string | null;
     history: string[];
+    ankiCards: { word: string; timestamp: number }[];
     aiExplanation: string | null;
     isAILoading: boolean;
     setSearchQuery: (query: string) => void;
@@ -20,6 +21,7 @@ interface DictionaryState {
     removeFromHistory: (word: string) => void;
     addBookMark: () => Promise<void>;
     askAI: () => Promise<void>;
+    getFullHistory: () => { word: string; timestamp: number; addedToAnki: boolean }[];
 }
 
 // Create the Zustand store
@@ -32,6 +34,7 @@ export const useDictionaryStore = create<DictionaryState>()(
             isLoading: false,
             error: null,
             history: [],
+            ankiCards: [],
             aiExplanation: null,
             isAILoading: false,
 
@@ -49,11 +52,23 @@ export const useDictionaryStore = create<DictionaryState>()(
                 if (result.data) {
                     // Add to history if successful
                     const currentHistory = get().history;
-                    // Avoid duplicates and put newest at the top
+                    const timestamp = Date.now();
+
+                    // Avoid duplicates and put newest at the top for display history (limited to 20)
                     const newHistory = [
                         query,
                         ...currentHistory.filter(word => word.toLowerCase() !== query.toLowerCase())
-                    ].slice(0, 20); // Limit history to 20 items
+                    ].slice(0, 20); // Limit display history to 20 items
+
+                    // For the full history tracking, we store each query with timestamp
+                    const fullHistoryStorage = JSON.parse(localStorage.getItem('full-history-storage') || '[]');
+                    const newFullHistory = [
+                        { word: query, timestamp },
+                        ...fullHistoryStorage.filter((item: { word: string }) =>
+                            item.word.toLowerCase() !== query.toLowerCase()
+                        )
+                    ];
+                    localStorage.setItem('full-history-storage', JSON.stringify(newFullHistory));
 
                     set({
                         wordData: result.data,
@@ -95,6 +110,15 @@ export const useDictionaryStore = create<DictionaryState>()(
                     const frontTemplate = definitionHtml;
                     const backTemplate = `<div><h1>${wordData.word}</h1></div>`;
                     await createCard("Dictionary", frontTemplate, backTemplate);
+
+                    // Track this word in ankiCards
+                    const ankiCards = get().ankiCards;
+                    const newAnkiCards = [
+                        { word: wordData.word, timestamp: Date.now() },
+                        ...ankiCards.filter(card => card.word.toLowerCase() !== wordData.word.toLowerCase())
+                    ];
+
+                    set({ ankiCards: newAnkiCards });
 
                     toast.success(`Added "${wordData.word}" to Anki`, {
                         description: "Card created with dictionary definition",
@@ -150,11 +174,24 @@ export const useDictionaryStore = create<DictionaryState>()(
                         duration: 5000,
                     });
                 }
+            },
+
+            getFullHistory: () => {
+                const { ankiCards } = get();
+                const fullHistoryStorage = JSON.parse(localStorage.getItem('full-history-storage') || '[]');
+
+                return fullHistoryStorage.map((item: { word: string; timestamp: number }) => ({
+                    ...item,
+                    addedToAnki: ankiCards.some(card => card.word.toLowerCase() === item.word.toLowerCase())
+                }));
             }
         }),
         {
             name: "dictionary-storage", // name of the storage
-            partialize: (state) => ({ history: state.history }), // only history will be persisted
+            partialize: (state) => ({
+                history: state.history,
+                ankiCards: state.ankiCards
+            }), // persist both history and ankiCards
         }
     )
 );
