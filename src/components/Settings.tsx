@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
 
 // Define props for Settings
 interface SettingsProps {
@@ -19,7 +20,7 @@ interface SettingsProps {
 }
 
 export const Settings: React.FC<SettingsProps> = ({ goBack }) => {
-  const { shortcuts, updateShortcut } = useSettingsStore();
+  const { shortcuts, updateShortcut, getShortcutByAction } = useSettingsStore();
   const [editingShortcuts, setEditingShortcuts] = useState<Record<string, string>>({});
 
   // Initialize editing shortcuts state
@@ -38,12 +39,36 @@ export const Settings: React.FC<SettingsProps> = ({ goBack }) => {
     }));
   };
 
-  const saveShortcut = (shortcut: ShortcutConfig) => {
-    const newValue = editingShortcuts[shortcut.name];
-    updateShortcut(shortcut.name, newValue);
-    toast.success("Shortcut updated", {
-      description: `${shortcut.description} is now ${newValue}`,
-    });
+  const saveShortcut = async (shortcut: ShortcutConfig) => {
+    try {
+      const oldShortcut = getShortcutByAction(shortcut.action);
+      const newValue = editingShortcuts[shortcut.name];
+
+      // Try to unregister the old shortcut if it exists
+      if (oldShortcut) {
+        try {
+          await unregister(oldShortcut.shortcut);
+        } catch (error) {
+          console.warn(`Failed to unregister old shortcut: ${oldShortcut.shortcut}`, error);
+        }
+      }
+
+      // Update the shortcut in the store
+      updateShortcut(shortcut.name, newValue);
+
+      toast.success("Shortcut updated", {
+        description: `${shortcut.description} is now ${newValue}`,
+      });
+
+      // Note: No need to register the shortcut here because the Sidebar component
+      // will handle registering it through its useEffect hook that watches for changes
+      // in the settings store
+    } catch (error) {
+      console.error("Error updating shortcut:", error);
+      toast.error("Failed to update shortcut", {
+        description: "An error occurred while updating the shortcut.",
+      });
+    }
   };
 
   return (
