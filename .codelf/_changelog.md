@@ -1,3 +1,58 @@
+## 2025-05-02
+
+### 1. Add Tray Menu with Restart Option
+
+**Change Type**: feature
+
+> **Purpose**: Add system tray functionality with menu options including restart
+> **Detailed Description**: Implemented system tray icon with dropdown menu, including app restart functionality
+> **Reason for Change**: To provide easy access to app functions without the main window and improve user experience
+> **Impact Scope**: Tauri backend, tray menu configuration
+> **API Changes**: Added tray setup utilities 
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, adds convenience functionality
+
+   ```
+   root
+   - src
+     - lib
+       - utils.ts // update - Added tray setup logic
+   - src-tauri
+     - src
+       - lib.rs // update - Added tray menu implementation with restart option
+   ```
+
+### 2. Add Search Focus with Keyboard Shortcut
+
+**Change Type**: feature
+
+> **Purpose**: Implement search field focus with configurable keyboard shortcut
+> **Detailed Description**: Added functionality to focus the dictionary search input field using a global keyboard shortcut
+> **Reason for Change**: To improve workflow efficiency and user experience
+> **Impact Scope**: Dictionary component, shortcuts system
+> **API Changes**: Extended shortcut functionality to handle search focus
+> **Configuration Changes**: None
+> **Performance Impact**: Minimal, improves user workflow
+
+   ```
+   root
+   - src
+     - components
+       - Dictionary.tsx // update - Added search focus functionality
+     - hooks
+       - use-shortcuts.ts // update - Extended shortcut handling for search focus
+   ```
+
+### Git Commit Log
+
+```
+0f85f9a - refactor: move tray setup logic to utils and update tray menu with restart option (AHpx, 2025-05-02)
+3a9e605 - feat: add tray menu (AHpx, 2025-05-02)
+6167a3b - feat: add basic tray menu (AHpx, 2025-05-02)
+d0d2d74 - feat: add search focus with shortcut (AHpx, 2025-05-02)
+cbe74b3 - feat: add short cut registeration (AHpx, 2025-05-02)
+```
+
 ## 2023-12-20 15:45:00
 
 

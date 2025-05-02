@@ -31,6 +31,18 @@
 > Development server can be started with `bun run dev`.
 
 
+## Features
+
+> Dictionary lookup with local cache support
+> Search history with persistence
+> Resizable sidebar interface
+> Anki flashcard integration
+> AI-powered word explanations
+> Global keyboard shortcuts for improved workflow
+> System tray menu with restart option
+> Search field focus with keyboard shortcut
+
+
 ## Structure
 
 ```
