@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { DictionaryData, queryDictionaryCache } from "../lib/dictionary/dictionaryQuery";
 import { persist } from "zustand/middleware";
 import { createCard } from "../lib/anki";
-import { getLLMResult } from "../lib/llmService";
 import { toast } from "sonner";
 
 // Define the state structure
@@ -13,14 +12,11 @@ interface DictionaryState {
     error: string | null;
     history: string[];
     ankiCards: { word: string; timestamp: number }[];
-    aiExplanation: string | null;
-    isAILoading: boolean;
     setSearchQuery: (query: string) => void;
     handleSearch: () => Promise<void>;
     clearHistory: () => void;
     removeFromHistory: (word: string) => void;
     addBookMark: () => Promise<void>;
-    askAI: () => Promise<void>;
     getFullHistory: () => { word: string; timestamp: number; addedToAnki: boolean }[];
 }
 
@@ -35,8 +31,6 @@ export const useDictionaryStore = create<DictionaryState>()(
             error: null,
             history: [],
             ankiCards: [],
-            aiExplanation: null,
-            isAILoading: false,
 
             // Actions
             setSearchQuery: (query) => set({ searchQuery: query }),
@@ -45,7 +39,7 @@ export const useDictionaryStore = create<DictionaryState>()(
                 const query = get().searchQuery.trim();
                 if (!query) return;
 
-                set({ isLoading: true, error: null, wordData: null, aiExplanation: null });
+                set({ isLoading: true, error: null, wordData: null });
 
                 const result = await queryDictionaryCache(query);
                 console.log('result', result);
@@ -129,48 +123,6 @@ export const useDictionaryStore = create<DictionaryState>()(
 
                     toast.error(`Failed to add "${wordData.word}" to Anki`, {
                         description: String(error),
-                        duration: 5000,
-                    });
-                }
-            },
-
-            askAI: async () => {
-                const { wordData } = get();
-                if (!wordData) return;
-
-                set({ isAILoading: true });
-
-                try {
-                    const prompt = `
-                        Word: ${wordData.word}
-                        
-                        I need a clear explanation of this word that:
-                        1. Explains the meaning in simple terms
-                        2. Provides 2-3 practical example sentences showing how to use it
-                        3. Mentions any common collocations or phrases
-                        4. If relevant, notes any important usage contexts (formal/informal, AmE/BrE differences, etc.)
-                        
-                        Format your response in clean HTML with appropriate heading and paragraph tags.
-                    `;
-
-                    const systemPrompt = "You are a helpful AI assistant that provides clear and concise explanations of vocabulary words with examples that make them easy to understand and remember.";
-
-                    const explanation = await getLLMResult(prompt, systemPrompt);
-                    set({ aiExplanation: explanation, isAILoading: false });
-
-                    toast.success(`AI explanation generated for "${wordData.word}"`, {
-                        description: "You can now add this word to Anki with enhanced explanation",
-                        duration: 3000,
-                    });
-                } catch (error) {
-                    console.error("Failed to get AI explanation:", error);
-                    set({
-                        aiExplanation: "Sorry, I couldn't generate an explanation at this time.",
-                        isAILoading: false
-                    });
-
-                    toast.error(`Failed to generate AI explanation`, {
-                        description: "Please check your API key and internet connection",
                         duration: 5000,
                     });
                 }

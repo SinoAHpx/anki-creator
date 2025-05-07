@@ -5,10 +5,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookmarkPlus, Sparkles } from "lucide-react";
+import { BookmarkPlus } from "lucide-react";
 import { useDictionaryStore } from "@/store/dictionaryStore";
 export function DictionaryHeader() {
-  const { wordData, addBookMark, askAI } = useDictionaryStore();
+  const { wordData, addBookMark } = useDictionaryStore();
 
   if (!wordData) return null;
 
@@ -21,10 +21,6 @@ export function DictionaryHeader() {
             <Button variant="ghost" size="icon" onClick={addBookMark} >
               <BookmarkPlus className="h-6 w-6" />
               <span className="sr-only">Add to Library</span>
-            </Button>
-            <Button variant="ghost" size="icon" onClick={askAI}>
-              <Sparkles className="h-6 w-6" />
-              <span className="sr-only">Ask AI</span>
             </Button>
           </div>
         </div>
