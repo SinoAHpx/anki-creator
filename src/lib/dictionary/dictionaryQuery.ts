@@ -122,7 +122,7 @@ export async function queryDictionaryCache(
                 };
             }
         }
-
+        
         const cache = await response.json();
         const entry = Array.isArray(cache)
             ? cache.find((item) => item.word.toLowerCase() === lowerCaseQuery)
