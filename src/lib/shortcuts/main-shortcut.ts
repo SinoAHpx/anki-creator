@@ -5,10 +5,9 @@ export async function showWindowAndQuery(searchInputRef: React.RefObject<HTMLInp
     const appWindow = getCurrentWindow();
     const { setSearchQuery } = useDictionaryStore.getState()
 
-    const isVisible = await appWindow.isVisible();
-    if (!isVisible) {
-        await appWindow.show();
-    }
+    await appWindow.hide()
+    await appWindow.close()
+    await appWindow.show()
     await appWindow.setFocus();
     searchInputRef.current?.focus();
     setSearchQuery('')
