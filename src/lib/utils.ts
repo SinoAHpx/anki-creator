@@ -8,6 +8,7 @@ import { defaultWindowIcon } from '@tauri-apps/api/app';
 import { register, unregister } from "@tauri-apps/plugin-global-shortcut";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useDictionaryStore } from "@/store/dictionaryStore";
+import { showWindowAndQuery } from "./shortcuts/main-shortcut";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -50,7 +51,6 @@ export async function setupTray() {
 
 export const registerShortcut = async (searchInputRef: React.RefObject<HTMLInputElement>) => {
     const { getShortcutByAction } = useSettingsStore.getState();
-    const { setSearchQuery } = useDictionaryStore.getState()
     const shortcut = getShortcutByAction("focusSearch");
     if (!shortcut) return;
 
@@ -60,16 +60,7 @@ export const registerShortcut = async (searchInputRef: React.RefObject<HTMLInput
         } catch (e) { }
 
         await register(shortcut.shortcut, async () => {
-            const appWindow = getCurrentWindow();
-
-            const isVisible = await appWindow.isVisible();
-            if (!isVisible) {
-                await appWindow.show();
-            }
-            await appWindow.setFocus();
-            searchInputRef.current?.focus();
-            setSearchQuery('')
-
+            showWindowAndQuery(searchInputRef)
         });
         // console.log(`Registered shortcut: ${shortcut.shortcut}`);
     } catch (error) {
