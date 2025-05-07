@@ -7,7 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { ResizablePanel } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { useSettingsStore } from "@/store/settingsStore";
-import { registerShortcut } from "@/lib/utils";
+import { registerShortcut } from "@/lib/shortcuts/register-shortcuts";
 
 export type Page = "dictionary" | "settings" | "library";
 

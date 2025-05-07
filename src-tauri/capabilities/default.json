@@ -19,6 +19,7 @@
     "core:window:allow-hide",
     "process:allow-restart",
     "core:window:allow-close",
-    "clipboard-manager:allow-read-text"
+    "clipboard-manager:allow-read-text",
+    "process:default"
   ]
 }

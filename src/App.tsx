@@ -5,15 +5,12 @@ import { Settings } from "./components/Settings";
 import { Library } from "./components/Library";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./components/ui/resizable";
 import { Toaster } from "./components/ui/sonner";
-import { setupTray } from "./lib/utils";
+import { setupTray } from "./lib/tray-menu";
+await setupTray()
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>("dictionary");
   const goBackToDictionary = () => setCurrentPage("dictionary");
-
-  useEffect(() => {
-    setupTray();
-  }, [])
 
   return (
     <div className="h-screen flex flex-col bg-background text-foreground">
